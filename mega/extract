@@ -1,0 +1,23 @@
+#!/bin/sh
+
+if [ $# != 4 ]; then 
+ echo "usage"
+ echo "$ extract <mega file> <offset hex> <size hex> <name>"
+ exit
+fi
+
+uudecode -c < $1
+rm -f VSRAM CRAM
+
+OFFSET=$(printf %d $2)
+SIZE=$(printf %d $3)
+
+dd if=VRAM skip=$OFFSET bs=1 count=$SIZE of=bin.
+
+echo "$4" " = {" 
+xxd -i < bin.
+echo "};"
+
+#bin2head "$4" < bin.
+
+rm -f VRAM bin.
